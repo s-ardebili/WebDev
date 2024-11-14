@@ -29,6 +29,7 @@
         }
 
         try{
+
             //Today's weather yayyyyyy :D
             const currentResponse = await
                 fetch (`https://api.openweathermap.org/data/2.5/weather?
@@ -48,8 +49,16 @@
             alert('Error');
         }
         //Display Today's wweather
+        function displayTodaysWeather(data){
+            const temp = data.main.temp;
+            const description = data.weather[0].description;
+            
         //Dsiplay hourly forecast for today
+        function displayHourlyForecast(data){
+        }
         //display daily forecast (only high and low temps)
+        function displayHourlyForecast(data){
+        }  
        
     </script>
 
