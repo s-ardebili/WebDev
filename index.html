@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    
+    <div id = "todays-weather">
+        <p>Today's Weather</p>
     <div id="hourly">
         <p>Hourly Weather</p>
     </div>
@@ -19,18 +22,19 @@
         const API_KEY = '98f739e0598d2ea5ff75493594b0f8b1';
         const city = enterCity.value.trim();
 
+        //Enter city(I need to fix this)
         if (!city) {
             alert('Enter the city you would like to see the weather for:');
                   return;
         }
 
         try{
-            //current weather yayyyyyy :D
+            //Today's weather yayyyyyy :D
             const currentResponse = await
                 fetch (`https://api.openweathermap.org/data/2.5/weather?
                 q=${city}&appid=${API_KEY}&units=metric`);
-            const currentData = await currentResponse.json();
-            displayCurrentWeather(currentData);
+            const todaysData = await currentResponse.json();
+            displayTodaysWeather(todaysData);
 
             // forecast weatherrrrr
             const forecastResponse = await
@@ -41,6 +45,10 @@
             displayDailyForecast(forecastData);
             
         }
+        //Display Today's wweather
+        //Dsiplay hourly forecast for today
+        //display daily forecast (only high and low temps)
+       
     </script>
 
 </body>
