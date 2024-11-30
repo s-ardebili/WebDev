@@ -8,58 +8,97 @@
 </head>
 <body>
     
-    <div id = "todays-weather">
+    <div id="city-input">
+        <input type="text" id="enterCity" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather</button>
+    </div>
+
+    <div id="todays-weather">
         <p>Today's Weather</p>
+        <p id="current-temp"></p>
+        <p id="current-description"></p>
+    </div>
+
     <div id="hourly">
         <p>Hourly Weather</p>
+        <div id="hourly-forecast"></div>
     </div>
 
     <div id="daily">
         <p>Daily Weather</p>
+        <div id="daily-forecast"></div>
     </div>
 
     <script>
         const API_KEY = '98f739e0598d2ea5ff75493594b0f8b1';
-        const city = enterCity.value.trim();
 
-        //Enter city(I need to fix this)
-        if (!city) {
-            alert('Enter the city you would like to see the weather for:');
-                  return;
+        // Function to fetch weather data
+        async function getWeather() {
+            const city = document.getElementById('enterCity').value.trim();
+
+            if (!city) {
+                alert('Please enter the city you would like to see the weather for.');
+                return;
+            }
+
+            try {
+                // Fetch Today's Weather
+                const currentResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`);
+                const todaysData = await currentResponse.json();
+                displayTodaysWeather(todaysData);
+
+                // Fetch Hourly and Daily Weather
+                const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`);
+                const forecastData = await forecastResponse.json();
+                displayHourlyForecast(forecastData);
+                displayDailyForecast(forecastData);
+                
+            } catch (error) {
+                alert('Error fetching weather data');
+            }
         }
 
-        try{
-
-            //Today's weather yayyyyyy :D
-            const currentResponse = await
-                fetch (`https://api.openweathermap.org/data/2.5/weather?
-                q=${city}&appid=${API_KEY}&units=metric`);
-            const todaysData = await currentResponse.json();
-            displayTodaysWeather(todaysData);
-
-            // forecast weatherrrrr
-            const forecastResponse = await
-                fetch(`https://api.openweathermap.org/data/2.5/forecast?
-                q=${city}&appid=${API_KEY}&units=metric`);
-            const forecastData = await forecastResponse.json();
-            displayHourlyForecast(forecastData);
-            displayDailyForecast(forecastData);
-            
-        } catch (error) {
-            alert('Error');
-        }
-        //Display Today's wweather
-        function displayTodaysWeather(data){
+        // Display today's weather
+        function displayTodaysWeather(data) {
             const temp = data.main.temp;
             const description = data.weather[0].description;
-            
-        //Dsiplay hourly forecast for today
-        function displayHourlyForecast(data){
+            document.getElementById('current-temp').textContent = `Temperature: ${temp}°C`;
+            document.getElementById('current-description').textContent = `Condition: ${description}`;
         }
-        //display daily forecast (only high and low temps)
-        function displayHourlyForecast(data){
-        }  
-       
+
+        // Display hourly weather forecast (next 24 hours)
+        function displayHourlyForecast(data) {
+            const hourlyContainer = document.getElementById('hourly-forecast');
+            hourlyContainer.innerHTML = ''; // Clear previous hourly forecast
+
+            // Loop through the forecast data (3-hour intervals)
+            data.list.slice(0, 8).forEach(item => {
+                const time = new Date(item.dt * 1000).toLocaleTimeString();
+                const temp = item.main.temp;
+                const description = item.weather[0].description;
+                const forecastItem = document.createElement('div');
+                forecastItem.innerHTML = `<strong>${time}</strong>: ${temp}°C, ${description}`;
+                hourlyContainer.appendChild(forecastItem);
+            });
+        }
+
+        // Display daily weather forecast (highs and lows)
+        function displayDailyForecast(data) {
+            const dailyContainer = document.getElementById('daily-forecast');
+            dailyContainer.innerHTML = ''; // Clear previous daily forecast
+
+            // Loop through the daily forecast data
+            const days = data.list.filter((item, index) => index % 8 === 0); // 8 data points = 1 day
+
+            days.forEach(item => {
+                const date = new Date(item.dt * 1000).toLocaleDateString();
+                const highTemp = item.main.temp_max;
+                const lowTemp = item.main.temp_min;
+                const forecastItem = document.createElement('div');
+                forecastItem.innerHTML = `<strong>${date}</strong>: High: ${highTemp}°C, Low: ${lowTemp}°C`;
+                dailyContainer.appendChild(forecastItem);
+            });
+        }
     </script>
 
 </body>
