@@ -35,6 +35,7 @@
         // Function to fetch weather data
         async function getWeather() {
             const city = document.getElementById('enterCity').value.trim();
+            const getWeatherIconUrl = (iconCode) => `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 
             if (!city) {
                 alert('Please enter the city you would like to see the weather for.');
@@ -62,8 +63,11 @@
         function displayTodaysWeather(data) {
             const temp = data.main.temp;
             const description = data.weather[0].description;
+            const icon = getWeatherIconUrl(data.weather[0].icon);
             document.getElementById('current-temp').textContent = `Temperature: ${temp}°C`;
-            document.getElementById('current-description').textContent = `Condition: ${description}`;
+            document.getElementById('current-description').innerHTML = `
+            <img src="${icon}" alt="${description}" style="vertical-align: middle;">
+            Condition: ${description};
         }
 
         // Display hourly weather forecast (next 24 hours)
@@ -76,8 +80,10 @@
                 const time = new Date(item.dt * 1000).toLocaleTimeString();
                 const temp = item.main.temp;
                 const description = item.weather[0].description;
+                const icon = getWeatherIconUrl(item.weather[0].icon);
                 const forecastItem = document.createElement('div');
-                forecastItem.innerHTML = `<strong>${time}</strong>: ${temp}°C, ${description}`;
+                forecastItem.innerHTML =  <img src="${icon}" alt="${description}" style="vertical-align: middle; margin-right: 8px;">
+                <strong>${time}</strong>: ${temp}°C, ${description};
                 hourlyContainer.appendChild(forecastItem);
             });
         }
@@ -94,8 +100,12 @@
                 const date = new Date(item.dt * 1000).toLocaleDateString();
                 const highTemp = item.main.temp_max;
                 const lowTemp = item.main.temp_min;
+                const description = item.weather[0].description;
+                const icon = getWeatherIconUrl(item.weather[0].icon);
                 const forecastItem = document.createElement('div');
-                forecastItem.innerHTML = `<strong>${date}</strong>: High: ${highTemp}°C, Low: ${lowTemp}°C`;
+                forecastItem.innerHTML ='<img src="${icon}" alt="${description}" style="vertical-align: middle; margin-right: 8px;">';
+                <strong>${date}</strong>: High: ${highTemp}°C, Low: ${lowTemp}°C
+            `;
                 dailyContainer.appendChild(forecastItem);
             });
         }
